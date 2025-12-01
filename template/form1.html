@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stress & Anxiety Assessment</title>
+    <style>
+        /* --- General Styling and Color Palette --- */
+        :root {
+            --light-green: #e8f8e8;
+            --medium-green: #dcf2dc;
+            --dark-green: #4c9a4c;
+            --text-color: #333;
+            --subtle-gray: #555;
+            --white: #ffffff;
+            --recommendation-bg: #f0fff0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-green);
+            color: var(--text-color);
+        }
+
+        .main-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- Global Assessment Card Styling --- */
+        .assessment-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            overflow: hidden; /* Clear floats */
+        }
+
+        /* --- Header Styling (Assessment & Results) --- */
+        .page-header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .page-header h1 {
+            color: var(--dark-green);
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header-section {
+            display: flex;
+            align-items: center;
+            background-color: var(--medium-green);
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 15px;
+        }
+
+        .header-section .icon {
+            font-size: 24px;
+            margin-right: 15px;
+            color: var(--dark-green);
+        }
+
+        .header-section h2 {
+            margin: 0;
+            font-size: 20px;
+            color: var(--text-color);
+        }
+
+        .header-section p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--subtle-gray);
+        }
+
+        /* --- Assessment Questions Styling --- */
+        .question-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .question-item p {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.1s ease;
+        }
+
+        .option-label:hover {
+            background-color: var(--medium-green);
+        }
+
+        input[type="radio"] {
+            margin-right: 15px;
+            accent-color: var(--dark-green);
+        }
+
+        /* --- Submit Button --- */
+        .submit-btn {
+            display: block;
+            width: 150px;
+            margin: 20px auto 0;
+            padding: 12px;
+            background-color: var(--dark-green);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: #3b7d3b;
+        }
+
+        /* --- Results Page Styling --- */
+        #results-container {
+            display: none;
+        }
+
+        .issue-identified-summary {
+            padding: 15px 20px;
+            font-weight: bold;
+            font-size: 16px;
+            background-color: var(--white);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .issue-result-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .issue-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .issue-result-item .question-text {
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .read-more-btn {
+            background-color: var(--dark-green);
+            color: var(--white);
+            border: none;
+            padding: 6px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .read-more-btn:hover {
+            background-color: #3b7d3b;
+        }
+
+        .recommendation-box {
+            background-color: var(--recommendation-bg);
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--dark-green);
+        }
+
+        /* --- Full Treatment Page Styling (Read More) --- */
+        #full-treatment-container {
+            display: none;
+            min-height: 400px;
+        }
+
+        .full-treatment-header {
+            text-align: center;
+            padding: 30px 20px;
+            background-color: var(--medium-green);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .full-treatment-header h2 {
+            font-size: 28px;
+            color: var(--dark-green);
+            margin: 0;
+        }
+
+        .treatment-content {
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .treatment-content h3 {
+            color: var(--dark-green);
+            border-left: 4px solid var(--dark-green);
+            padding-left: 10px;
+            margin-top: 25px;
+        }
+
+        .treatment-content ul {
+            padding-left: 20px;
+        }
+
+        .back-btn {
+            background-color: var(--subtle-gray);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+
+        <div id="assessment-container">
+            <div class="page-header">
+                <h1>Stress & Anxiety Assessment</h1>
+                <p>Please answer based on the last 4 weeks.</p>
+            </div>
+            
+            <form id="assessment-form">
+                </form>
+
+            <button class="submit-btn" onclick="submitAssessment()">Submit</button>
+        </div>
+
+        <div id="results-container">
+            <div class="header-section">
+                <span class="icon">💚</span>
+                <div>
+                    <h2>Assessment Results</h2>
+                    <p>Question-wise recommendations (updated layout)</p>
+                </div>
+            </div>
+
+            <div class="issue-identified-summary" id="issue-count">
+                </div>
+
+            <div class="assessment-card" id="results-list">
+                </div>
+
+            <button class="submit-btn back-btn" onclick="showAssessment()">Re-take Assessment</button>
+        </div>
+
+        <div id="full-treatment-container" class="assessment-card">
+            <div class="full-treatment-header">
+                <h2 id="full-treatment-title"></h2>
+            </div>
+            <div class="treatment-content" id="full-treatment-content">
+                </div>
+            <button class="submit-btn back-btn" onclick="showResults()">Back to Results</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. DATA STRUCTURES ---
+        const QUESTIONS = [
+            "Do you frequently experience unexplained muscle aches, particularly in your neck and shoulders?",
+            "Do you suffer from a nervous stomach or digestive issues?",
+            "Do you feel nausea, especially before deadlines or exams?",
+            "Have you noticed your immune system feeling weaker (e.g., getting ill more often or taking longer to recover)?",
+            "Do you feel physically fatigued or exhausted?",
+            "Do you experience palpitations, a pounding heart, or an accelerated heart rate?",
+            "Do you sweat excessively (e.g., sweaty palms) when feeling pressured?",
+            "Do you find yourself trembling or shaking?",
+            "Do you experience sensations of shortness of breath?",
+            "Do you feel dizzy or lightheaded?",
+            "Do you ever feel a sensation of choking?",
+            "Do you experience excessive worry and anxiety regarding your performance?",
+            "Do you find it difficult to control this anxiety once it starts?",
+            "Do you feel restless, keyed-up, or 'on edge'?",
+            "Do you find yourself becoming irritable or snapping at friends and family over small issues?",
+            "Have you developed a cynical attitude toward school or college?",
+            "Do you have an intense fear of losing control?",
+            "Do you experience a fear of dying or impending doom?",
+            "Do you find yourself constantly doubting your self-worth?",
+            "Do you feel guilt or shame when you are resting, or view rest as 'laziness'?",
+            "Do you obsessively check grades, emails, or seek comparisons with your peers?",
+            "Do you struggle with maladaptive perfectionism or being extremely critical of yourself?",
+            "Do you engage in 'all-or-nothing' thinking (e.g., believing 'If I don't get that grade, I am a loser')?",
+            "Are you unable to see your value as a person outside of your achievements?",
+            "Do you immediately dismiss your successes and focus entirely on small errors?",
+            "Do you feel like you are forgetting everything or that your mind goes blank?",
+            "Have you experienced sleep disturbances (sleeping too little or too much)?",
+            "Have you lost interest in hobbies or activities that usually bring you joy?",
+            "Do you find yourself procrastinating on tasks?",
+            "Do you tend to overwork or find it hard to stop working?",
+            "Have you been withdrawing socially, isolating yourself, or feeling lonely?",
+            "Have you been neglecting self-care (e.g., skipping meals, eating junk food, reducing hygiene, or stopping exercise)?"
+        ];
+
+        const OPTIONS = [
+            "Not at all", 
+            "Several days", 
+            "More than half the days", 
+            "Nearly every day"
+        ];
+        
+        // Score Mapping: Index 0=Not at all (0), Index 1=Several days (1), etc.
+        const SCORE_MAP = [0, 1, 2, 3];
+
+        const SHORT_TREATMENTS = [
+            { id: 1, title: "Muscle aches (neck & shoulders)", recommendations: ["Your body seems relaxed — no stress signs.", "Try light stretching for relief.", "Include daily 10-min relaxation exercises.", "Start a guided muscle-relaxation routine."] },
+            { id: 2, title: "Nervous stomach / digestion", recommendations: ["Your digestion seems stable — great job.", "Practice slow breathing before meals.", "Add short mindful breaks during the day.", "Follow a stress-gut calming routine."] },
+            { id: 3, title: "Nausea before deadlines", recommendations: ["You’re handling deadlines well — no stress nausea.", "Use 4-7-8 breathing before tasks.", "Try quick grounding techniques.", "Follow pre-task anxiety-management steps."] },
+            { id: 4, title: "Weak immune system", recommendations: ["Your immunity feels balanced — good going!", "Add 10-min daily relaxation.", "Improve sleep–stress hygiene.", "Start a stress-recovery lifestyle plan."] },
+            { id: 5, title: "Physical fatigue", recommendations: ["Your energy levels appear stable.", "Take short breaks during tasks.", "Add a gentle daily movement routine.", "Follow a structured energy-restoration plan."] },
+            { id: 6, title: "Palpitations / fast heartbeat", recommendations: ["Your heart rhythm seems calm and steady.", "Practice slow breathing when pressured.", "Use anxiety-control breathing twice daily.", "Start a guided cardiac-calming routine."] },
+            { id: 7, title: "Excessive sweating under pressure", recommendations: ["You’re staying calm in stressful moments — great.", "Try quick hand-relaxation tips.", "Practice pressure-control breathing.", "Follow a daily stress-desensitization routine."] },
+            { id: 8, title: "Trembling / shaking", recommendations: ["Your body shows good emotional stability.", "Do quick grounding when anxious.", "Add regular relaxation training.", "Begin a daily anxiety-control program."] },
+            { id: 9, title: "Shortness of breath", recommendations: ["Your breathing seems normal and balanced.", "Use slow rhythmic breathing.", "Add breath-control exercises daily.", "Follow a structured breath-regulation plan."] },
+            { id: 10, title: "Dizziness / lightheadedness", recommendations: ["Your balance seems steady — well managed.", "Drink water & rest briefly.", "Add daily relaxation practices.", "Start a stress-trigger management plan."] },
+            { id: 11, title: "Choking sensation", recommendations: ["You’re managing stress well — no tension in throat.", "Try neck-jaw relaxation.", "Practice mindful breathing daily.", "Start a guided anxiety-release routine."] },
+            { id: 12, title: "Excessive worry about performance", recommendations: ["You seem confident and balanced about performance.", "Use short worry-pause breaks.", "Practice structured worry-management.", "Follow a performance-anxiety plan."] },
+            { id: 13, title: "Hard to control anxiety", recommendations: ["Your emotional control seems strong.", "Try 2-min breathing resets.", "Add daily CBT-style grounding.", "Begin an anxiety-regulation program."] },
+            { id: 14, title: "Restlessness / being on edge", recommendations: ["Your mind feels calm — good emotional balance.", "Use mini relaxation breaks.", "Try a short evening calming routine.", "Start a structured restlessness-control plan."] },
+            { id: 15, title: "Irritability / snapping", recommendations: ["You’re maintaining healthy emotional reactions.", "Use pause-and-breathe technique.", "Add mood-calming exercises.", "Follow an anger-stress control routine."] },
+            { id: 16, title: "Cynical about school/college", recommendations: ["You seem to hold a positive academic mindset.", "Try gratitude journaling.", "Practice reframing negative thoughts.", "Start a motivation-renewal plan."] },
+            { id: 17, title: "Fear of losing control", recommendations: ["You appear mentally steady and grounded.", "Practice grounding exercises.", "Add guided relaxation daily.", "Begin an emotional-stability program."] },
+            { id: 18, title: "Fear of dying / doom", recommendations: ["Your mind shows good emotional safety.", "Use calming self-talk.", "Try short anxiety-reduction tools.", "Start a structured panic-control plan."] },
+            { id: 19, title: "Constant self-doubt", recommendations: ["You show healthy self-confidence.", "Use daily positive affirmations.", "Try small self-esteem exercises.", "Follow a guided confidence-building plan."] },
+            { id: 20, title: "Guilt while resting", recommendations: ["You have a balanced view of rest — great!", "Practice mindful resting.", "Set healthy work-rest boundaries.", "Begin a rest-without-guilt training plan."] },
+            { id: 21, title: "Obsessive checking (grades, email)", recommendations: ["You maintain good digital boundaries.", "Limit checks with 10-minute gaps.", "Use scheduled-check timings.", "Start a compulsive-checking control plan."] },
+            { id: 22, title: "Maladaptive perfectionism", recommendations: ["You show healthy standards — great balance.", "Practice 'good-enough' mindset.", "Use perfectionism-control worksheets.", "Begin a perfectionism-reduction plan."] },
+            { id: 23, title: "All-or-nothing thinking", recommendations: ["Your thinking pattern seems flexible — good sign.", "Use simple thought-reframe.", "Practice CBT thought balancing.", "Start a structured cognitive-shift plan."] },
+            { id: 24, title: "No value beyond achievements", recommendations: ["You recognize your worth — wonderful strength.", "Try daily self-worth reminders.", "Use value-based journaling.", "Follow a self-identity strengthening plan."] },
+            { id: 25, title: "Ignoring successes", recommendations: ["You appreciate your wins — keep it up!", "Celebrate small wins daily.", "Use positive-tracking journal.", "Start a self-appreciation development plan."] },
+            { id: 26, title: "Forgetfulness / blank mind", recommendations: ["Your focus seems steady and clear.", "Take short mental breaks.", "Add focus-improvement exercises.", "Follow a cognitive-calming routine."] },
+            { id: 27, title: "Sleep issues", recommendations: ["Your sleep cycle appears healthy — good job.", "Try relaxing before sleep.", "Improve bedtime routine.", "Begin a structured sleep-recovery plan."] },
+            { id: 28, title: "Loss of interest in hobbies", recommendations: ["Your interest levels seem balanced.", "Try re-engaging with small fun tasks.", "Add mood-boosting activities.", "Follow a motivation-restoration plan."] },
+            { id: 29, title: "Procrastination", recommendations: ["You’re managing tasks well — minimal delay.", "Use 5-minute start rule.", "Practice task-chunking.", "Start an anti-procrastination routine."] },
+            { id: 30, title: "Overworking", recommendations: ["You maintain a healthy work-life balance.", "Schedule mini breaks.", "Set firm stop-working times.", "Begin a burnout-prevention plan."] },
+            { id: 31, title: "Social withdrawal / loneliness", recommendations: ["You maintain healthy social connections.", "Reach out to one friend.", "Add weekly social activity.", "Start a connection-building plan."] },
+            { id: 32, title: "Neglecting self-care", recommendations: ["Your self-care habits look strong — keep it up!", "Add one small self-care action daily.", "Follow a simple self-care checklist.", "Start a structured self-care recovery plan."] }
+        ];
+
+        const FULL_TREATMENTS = [
+            // Note: I'm using HTML list/paragraph tags to format the full text nicely.
+            { 
+                id: 1, 
+                title: "Unexplained Muscle Aches (Neck & Shoulders)", 
+                detail: `
+                    <h2>Technique: Differential Relaxation (Active Muscle Deactivation)</h2>
+                    <p>Under academic pressure, the body unconsciously activates postural muscles—shoulders, upper back, jaw—creating a “threat brace.” These muscles stay contracted for hours, even when you don’t need them. Differential Relaxation teaches the brain to keep <strong>task-irrelevant muscles OFF</strong> while <strong>task-relevant muscles work normally</strong> (eyes/hands). This interrupts chronic tension loops.</p>
+            
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li><strong>Visual Cue:</strong> Place a small sticker on your laptop screen or diary.</li>
+                        <li><strong>Cue-Triggered Release:</strong> Every time the sticker enters your awareness, immediately drop both shoulders by 1–2 inches and loosen the jaw.</li>
+                        <li><strong>Check:</strong> Ask, “Am I lifting my shoulders like I’m holding up the ceiling?”</li>
+                        <li><strong>Micro-Relaxation:</strong> Exhale sharply and let your shoulders “fall.”</li>
+                        <li><strong>Functional Practice:</strong> Use this during studying (NOT during relaxation time).</li>
+                        <li><strong>Goal:</strong> Teach the body to relax while working, not only during breaks.</li>
+                        <li><strong>Result:</strong> Eliminates muscle aches caused by prolonged anticipatory tension.</li>
+                    </ol>
+                ` 
+            },
+            { 
+                id: 2, 
+                title: "Nervous Stomach / Digestive Issues", 
+                detail: `
+                    <h2>Technique: Vagal Tone Stimulation</h2>
+                    <p>Anxiety shuts down digestion via sympathetic activation. Vagus nerve stimulation restores parasympathetic activity, enabling normal stomach movement. Mechanical vibration of vocal cords directly stimulates the vagus—reducing nausea, knots, and cramps.</p>
+            
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li><strong>Humming:</strong> Close mouth and hum a low “Mmmm” for 2 minutes.</li>
+                        <li><strong>Target vibration:</strong> Feel the vibration in the throat and chest.</li>
+                        <li><strong>Breathing Integration:</strong> Slow the exhale while humming.</li>
+                        <li><strong>Cold Sip Technique:</strong> Sip ice-cold water to activate vagal receptors.</li>
+                        <li><strong>Posture Reset:</strong> Straighten spine to reduce abdominal compression.</li>
+                        <li><strong>Timing:</strong> Use during nausea spikes or before exams.</li>
+                        <li><strong>Outcome:</strong> Re-activates digestion and reduces stomach-based anxiety.</li>
+                    </ol>
+
+                    <h2>Healthy Lifestyle</h2>
+                    <ul>
+                        <li><strong>Stay hydrated:</strong> Drink plenty of water throughout the day to maintain regular bowel movements and aid digestion.</li>
+                        <li><strong>Manage stress:</strong> Use relaxation techniques like meditation or deep breathing, as stress can worsen IBS and acid reflux.</li>
+                    </ul>
+                ` 
+            },
+            { 
+                id: 3, 
+                title: "Nausea Before Deadlines / Exams", 
+                detail: `
+                    <h2>Technique: Gut–Brain Loop Interruption</h2>
+                    <p>Pre-performance anxiety increases cortisol, signaling the gut to slow digestion, causing nausea. Intervention in the gut–brain loop sends “safety” signals to the brain.</p>
+
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li><strong>Diaphragmatic Breathing (4–7–8):</strong> Reduce stomach rigidity.</li>
+                        <li><strong>Vagal Tapping:</strong> Tap lightly on sternum while exhaling.</li>
+                        <li><strong>Warm Compress:</strong> Place warm hand on stomach for 20 seconds.</li>
+                        <li><strong>Cognitive Labeling:</strong> Say, “This sensation is my brain preparing me, not harming me.”</li>
+                        <li><strong>Behavioral Completion:</strong> Continue task despite nausea to reduce conditioned fear.</li>
+                        <li><strong>Goal:</strong> Teach the body that nausea ≠ danger.</li>
+                        <li><strong>Outcome:</strong> Nausea frequency decreases within days.</li>
+                    </ol>
+                ` 
+            },
+            { 
+                id: 4, 
+                title: "Weakened Immunity / Getting Sick More Often", 
+                detail: `
+                    <h2>Technique: Stress-Load Reduction + Physiological Recovery</h2>
+                    <p>Chronic academic stress increases cortisol, suppressing immunity. The treatment focuses on reducing stress-related physiological load rather than supplements.</p>
+
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li>Schedule micro-recovery blocks: 5 minutes every 30 minutes.</li>
+                        <li>Active recovery: Stretch, hydrate, or walk (avoid screen scrolling).</li>
+                        <li>Set boundaries: No academic work after a fixed evening cutoff.</li>
+                        <li>Sleep protocol: Use bed only for sleep; dark room; no studying in bed.</li>
+                        <li>Nutrition: Eat every 3–4 hours; do not skip meals.</li>
+                        <li>Exposure reduction: Reduce “internal stress checking” (grades, deadlines).</li>
+                        <li>Outcome: Cortisol normalization → stronger immunity.</li>
+                    </ol>
+                ` 
+            },
+            { 
+                id: 5, 
+                title: "Physical Fatigue / Exhaustion", 
+                detail: `
+                    <h2>Technique: Graded Task Assignment (Chunking)</h2>
+                    <p>Fatigue often arises from perceiving tasks as overwhelming. Breaking tasks into smaller chunks restores energy and productivity.</p>
+
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li>Break tasks into very small units (e.g., “Read 1 heading”).</li>
+                        <li>Measure success by task initiation, not completion.</li>
+                        <li>Pomodoro pacing: 25 minutes work → 5 minutes break.</li>
+                        <li>Use active recovery during breaks (stretching, walking).</li>
+                        <li>Stop working before exhaustion to prevent crashes.</li>
+                        <li>Track energy patterns to build predictable routines.</li>
+                        <li>Outcome: Sustainable productivity is restored.</li>
+                    </ol>
+                ` 
+            },
+            { 
+                id: 6, 
+                title: "Palpitations / Pounding Heart / Sweating / Shaking", 
+                detail: `
+                    <h2>Technique: Interoceptive Exposure</h2>
+                    <p>Fear of bodily sensations amplifies them (panic loop). Exposure helps the brain learn that a racing heart, sweating, or shaking is safe.</p>
+
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li><strong>Heart Exposure:</strong> 60 seconds of jumping jacks, then stand still and feel heart slow naturally.</li>
+                        <li><strong>Shaking Exposure:</strong> Tense every muscle for 15 seconds → release.</li>
+                        <li><strong>Sweat Exposure:</strong> Hold palms together for 20 seconds; notice sweat evaporate.</li>
+                        <li><strong>Cognitive Reframe:</strong> “My body knows how to calm down.”</li>
+                        <li>Repeat 3–5 times/week.</li>
+                        <li>Outcome: Panic response diminishes.</li>
+                    </ol>
+                ` 
+            },
+            { 
+                id: 7, 
+                title: "Sensation of Shortness of Breath", 
+                detail: `
+                    <h2>Technique: CO₂ Rebalancing (Hand Cup)</h2>
+                    <p>Hyperventilation reduces CO₂, causing suffocation sensations. Rebreathing restores CO₂ levels and normalizes breathing drive.</p>
+
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li>Cup hands around nose and mouth.</li>
+                        <li>Breathe normally for 1–2 minutes.</li>
+                        <li>Avoid deep breaths—use shallow, natural breaths.</li>
+                        <li>Focus on exhale lengthening.</li>
+                        <li>Resume normal breathing.</li>
+                        <li>Practice at early symptom onset.</li>
+                        <li>Outcome: Air hunger disappears quickly.</li>
+                    </ol>
+                ` 
+            },
+            { 
+                id: 8, 
+                title: "Feeling Dizzy or Lightheaded", 
+                detail: `
+                    <h2>Technique: Orthostatic Reset + Grounding</h2>
+                    <p>Dizziness often results from rapid breathing, low CO₂, or blood pooling. Resetting blood flow and grounding stops the spiral.</p>
+
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li>Sit down immediately; place head slightly forward.</li>
+                        <li>Place one hand on chest and breathe slowly through nose.</li>
+                        <li>Press feet firmly into the ground (sensory grounding).</li>
+                        <li>Look at a fixed point (visual stabilization).</li>
+                        <li>Drink 2–3 sips of water.</li>
+                        <li>Avoid overcorrecting with deep breaths (may worsen dizziness).</li>
+                        <li>Practice grounding at early signs.</li>
+                        <li>Outcome: Stabilizes blood flow + reduces anxiety-triggered dizziness.</li>
+                    </ol>
+                ` 
+            },
+            { 
+                id: 9, 
+                title: "Sensation of Choking", 
+                detail: `
+                    <h2>Technique: Throat Muscle Reflex Reset</h2>
+                    <p>During anxiety, the laryngeal muscles tighten reflexively (globus sensation), creating the illusion of choking. BT reduces muscular tension and interrupts catastrophic interpretation (“I can’t breathe”).</p>
+            
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li><strong>Swallow Reset:</strong> Sip water slowly to relax throat muscles.</li>
+                        <li><strong>Neck Release:</strong> Tilt head forward, chin to chest for 10 seconds.</li>
+                        <li><strong>Soft Humming:</strong> Hum lightly to vibrate throat and interrupt bracing.</li>
+                        <li><strong>Finger Pressure:</strong> Massage SCM muscle for 20 seconds.</li>
+                        <li><strong>Cognitive Label:</strong> Say, “This is muscle tension, not choking.”</li>
+                        <li><strong>Behavioral Exposure:</strong> Continue working while sensation is present.</li>
+                        <li><strong>Outcome:</strong> Sensation weakens rapidly through habituation.</li>
+                    </ol>
+                ` 
+            },
+            { 
+                id: 10, 
+                title: "Excessive Worry & Anxiety About Performance", 
+                detail: `
+                    <h2>Technique: Progressive Muscle Relaxation (PMR)</h2>
+                    <p>Worry activates the sympathetic nervous system → tension → more worry. PMR mechanically relaxes tension to break this loop.</p>
+            
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li>Tense one muscle group (shoulders, hands, jaw) for 5–7 seconds.</li>
+                        <li>Suddenly release → allow relaxation flood.</li>
+                        <li>Move top-to-bottom: forehead → jaw → shoulders → arms → legs.</li>
+                        <li>Pair each release with long exhale.</li>
+                        <li>Use once daily + before study.</li>
+                        <li>Add “Cue Word” like <em>Relax</em> on each exhale.</li>
+                        <li><strong>Outcome:</strong> Reduces baseline arousal → decreases worry frequency.</li>
+                    </ol>
+                ` 
+            },
+            { 
+                id: 11, 
+                title: "Difficulty Controlling Anxiety Once It Starts", 
+                detail: `
+                    <h2>Technique: Applied Relaxation + Response Prevention</h2>
+                    <p>Anxiety → immediate checking/escaping → temporary relief → stronger anxiety next time. Applied Relaxation conditions an instant calming response on cue.</p>
+            
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li><strong>Stage 1 – Tension Awareness:</strong> Notice early signs (jaw tightening, shaking hands).</li>
+                        <li><strong>Stage 2 – Cue-Controlled Relaxation:</strong> Breathe out + say “Relax” internally and drop shoulders.</li>
+                        <li><strong>Stage 3 – Rapid Relaxation:</strong> Practice in stressful moments (opening textbooks, deadlines).</li>
+                        <li><strong>Stage 4 – Response Prevention:</strong> No immediate checking; wait 60 minutes before reassurance.</li>
+                        <li><strong>Stage 5 – Real-Life Application:</strong> Use during exams, tests, difficult questions.</li>
+                        <li><strong>Outcome:</strong> Anxiety becomes controllable within seconds.</li>
+                    </ol>
+                ` 
+            },
+            { 
+                id: 12, 
+                title: "Feeling Restless, “On Edge”", 
+                detail: `
+                    <h2>Technique: Competing Response Training</h2>
+                    <p>Restlessness is motor discharge of excess adrenaline. You cannot shake your leg while muscles perform an incompatible action.</p>
+            
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li><strong>Leg Bouncing:</strong> Cross ankles, push feet backward against chair.</li>
+                        <li><strong>Hand Fidgeting:</strong> Make a tight fist for 10 seconds.</li>
+                        <li><strong>Pen Clicking:</strong> Sit on your hands for 1 minute.</li>
+                        <li><strong>Discharge Breaks:</strong> Do 20 fast squats or run stairs for 30 seconds.</li>
+                        <li><strong>Outcome:</strong> Restlessness reduces via muscular competition + adrenaline burn-off.</li>
+                    </ol>
+                ` 
+            },
+            { 
+                id: 13, 
+                title: "Irritability / Snapping at Friends & Family", 
+                detail: `
+                    <h2>Technique: Doorway Breathing + Grounding + Overcorrection</h2>
+                    <p>Irritability is caused by high arousal, cognitive overload, and emotional spillover. BT lowers arousal + interrupts snapping impulses.</p>
+            
+                    <h3>Protocol 1 – Physiological Inhibition:</h3>
+                    <ol>
+                        <li>Before leaving your room, take 3 deep diaphragmatic breaths.</li>
+                        <li>Let shoulders drop on exhale → “buffer zone” of calm.</li>
+                    </ol>
+
+                    <h3>Protocol 2 – Grounding (5–4–3–2–1 Fast Version):</h3>
+                    <ol>
+                        <li>Name 3 things you can see.</li>
+                        <li>Touch 1 surface and feel its texture.</li>
+                        <li>Shifts attention outward → stops anger impulse.</li>
+                    </ol>
+
+                    <h3>Protocol 3 – Stop-Look-Listen:</h3>
+                    <ol>
+                        <li>Put pen down.</li>
+                        <li>Turn fully toward person.</li>
+                        <li>Speak calmly.</li>
+                    </ol>
+
+                    <h3>Protocol 4 – Social Aversion (Apology Tax):</h3>
+                    <ol>
+                        <li>If you snap → do a small service task (fold laundry, prepare tea).</li>
+                        <li>Makes snapping “expensive” → brain learns self-control.</li>
+                    </ol>
+
+                    <p><strong>Outcome:</strong> Dramatic reduction in irritability within 7–10 days.</p>
+                ` 
+            },
+            { 
+                id: 14, 
+                title: "Cynical Attitude Toward School / College", 
+                detail: `
+                    <h2>Technique: Behavioral Activation + Cognitive Reframing</h2>
+                    <p>Cynicism develops after repeated stress → feeling helpless. BT restores mastery, competence, and small wins.</p>
+            
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li><strong>Mastery Tasks:</strong> Start each session with an easy task you can finish in 3–5 minutes.</li>
+                        <li><strong>Effort–Outcome Diary:</strong> Record small achievements (even 1 page read).</li>
+                        <li><strong>Cognitive Re-Labeling:</strong> Replace “This is pointless” with “This is training my skill set.”</li>
+                        <li><strong>Positive Emotion Scheduling:</strong> Add 1 enjoyable activity after each study block.</li>
+                        <li><strong>Connection Ritual:</strong> Speak to one classmate daily to reduce isolation.</li>
+                        <li><strong>Outcome:</strong> Restores motivation and reduces negative emotional filter.</li>
+                    </ol>
+                ` 
+            },
+            { 
+                id: 15, 
+                title: "Intense Fear of Losing Control", 
+                detail: `
+                    <h2>Technique: Interoceptive Exposure + Cognitive Diffusion</h2>
+                    <p>Fear of losing control comes from misinterpreting bodily sensations as dangerous. Exposure teaches these sensations are safe.</p>
+            
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li><strong>Safe Sensation Exposure:</strong> Spin in a chair 20 seconds; run in place to elevate heartbeat; notice nothing dangerous occurs.</li>
+                        <li><strong>Cognitive Diffusion:</strong> Say the thought in a silly voice (“I am losing control!”) to detach from it.</li>
+                        <li><strong>Label Sensations:</strong> “This is adrenaline, not danger.”</li>
+                        <li><strong>Stay-in-the-Moment Rule:</strong> Do not escape; let sensation peak (90 seconds) and fall naturally.</li>
+                        <li><strong>Outcome:</strong> Fear response collapses → sense of control increases.</li>
+                    </ol>
+                ` 
+            },
+            { 
+                id: 16, 
+                title: "Fear of Dying / Feeling of Impending Doom", 
+                detail: `
+                    <h2>Technique: Physiological Reset + Catastrophic Exposure</h2>
+                    <p>This fear stems from misreading panic symptoms as life-threatening. Treatment teaches that sensations are uncomfortable but not fatal.</p>
+            
+                    <h3>Protocol:</h3>
+                    <ol>
+                        <li><strong>Dive Reflex Activation:</strong> Splash cold water on face, especially around eyes → heart rate drops, fear reduces.</li>
+                        <li><strong>Catastrophe Exposure (Imaginal):</strong> Write out feared scenario (“I faint in class”), read aloud for 5 minutes until anxiety drops.</li>
+                        <li><strong>Body Scan Reality Check:</strong> Check: Can I walk? Breathe? Swallow? Re-anchors in physical safety.</li>
+                        <li><strong>Breathing Reset:</strong> Long exhale-oriented breathing (5s out, 3s in) → calms amygdala.</li>
+                        <li><strong>Outcome:</strong> Removes fear-conditioning around panic sensations.</li>
+                    </ol>
+                ` 
+            },
+            {
+                id: 17,
+                title: "Constant Doubt About Self-Worth",
+                detail: `
+                    <h2>Technique: Extinction + Modeling (Self-Efficacy Training)</h2>
+                    <p>Low self-worth thoughts are reinforced when reassurance follows negative statements. Extinction removes reinforcement; modeling provides behaviors to imitate.</p>
+
+                    <h3>Protocol 1 – Extinction (Stop Rewarding Self-Doubt):</h3>
+                    <ol>
+                        <li>Identify who comforts you when you speak negatively.</li>
+                        <li>Tell them: “When I talk badly about myself, don’t reassure me.”</li>
+                        <li>They must ignore all self-doubt statements.</li>
+                        <li>Brain learns: self-doubt → no reward → behavior reduces.</li>
+                        <li>Track reduction over 1–2 weeks.</li>
+                    </ol>
+
+                    <h3>Protocol 2 – Modeling (Copying Confident Behavior):</h3>
+                    <ol>
+                        <li>Select a confidence model: a friend or public figure.</li>
+                        <li>Observe behaviors (posture, tone, actions after failure).</li>
+                        <li>Imitate these behaviors during stressful moments.</li>
+                        <li>Behavior shapes emotion; confidence grows through action.</li>
+                    </ol>
+                `
+            },
+            {
+                id: 18,
+                title: "Feeling Guilt or Shame When Resting",
+                detail: `
+                    <h2>Technique: ERP + Stimulus Control + Aversion</h2>
+                    <p>Your brain links rest with guilt and compulsive overworking. ERP breaks this loop.</p>
+
+                    <h3>Protocol 1 – ERP (Do-Nothing Challenge):</h3>
+                    <ol>
+                        <li>Sit still for 15 minutes, no phone or distractions.</li>
+                        <li>Allow guilt to rise without acting.</li>
+                        <li>Anxiety peaks by 10–12 minutes then drops.</li>
+                        <li>Brain learns rest is safe.</li>
+                    </ol>
+
+                    <h3>Protocol 2 – Stimulus Re-Labeling:</h3>
+                    <ol>
+                        <li>Stop calling it “rest.”</li>
+                        <li>Rename it to “System Maintenance” or “Neuro-Recovery Block.”</li>
+                        <li>Removes guilt-triggering words.</li>
+                    </ol>
+
+                    <h3>Protocol 3 – Aversion (Rubber Band Thought Stopping):</h3>
+                    <ol>
+                        <li>Wear a rubber band.</li>
+                        <li>When the thought “I am lazy” appears, snap the band lightly.</li>
+                        <li>Replace thought with: “Maintenance is mandatory.”</li>
+                    </ol>
+                `
+            },
+            {
+                id: 19,
+                title: "Obsessively Checking Grades / Comparing With Peers",
+                detail: `
+                    <h2>Technique: Response Prevention + Stimulus Control + Response Cost</h2>
+                    <p>Reassurance checking gives temporary relief but increases long-term anxiety. These protocols break the cycle.</p>
+
+                    <h3>Protocol 1 – Response Prevention (Blackout Protocol):</h3>
+                    <ol>
+                        <li>Pick one weekly time to check grades.</li>
+                        <li>Outside that time, lock the portal or give password to someone.</li>
+                        <li>Anxiety increases initially, then reduces.</li>
+                        </ol>
+
+                    <h3>Protocol 2 – Stimulus Control:</h3>
+                    <ol>
+                        <li>Mute grade-related groups.</li>
+                        <li>Archive competitive peers.</li>
+                        <li>Use the Walk-Away Rule in conversations about marks.</li>
+                    </ol>
+
+                    <h3>Protocol 3 – Response Cost (Comparison Tax):</h3>
+                    <ol>
+                        <li>Penalty for asking someone’s marks: ₹100 or 20 push-ups.</li>
+                        <li>Makes comparison expensive → frequency drops.</li>
+                    </ol>
+                `
+            },
+            {
+                id: 20,
+                title: "Maladaptive Perfectionism / Extreme Self-Criticism",
+                detail: `
+                    <h2>Technique: Shaping + Response Prevention + Error Exposure</h2>
+                    <p>Perfectionism causes paralysis and self-criticism. These steps retrain productivity.</p>
+
+                    <h3>Protocol 1 – Shaping (Sloppy Draft Rule):</h3>
+                    <ol>
+                        <li>Set a 20-minute timer.</li>
+                        <li>Create the messiest draft possible.</li>
+                        <li>Reward completion over quality.</li>
+                    </ol>
+
+                    <h3>Protocol 2 – Response Prevention (No-Edit Rule):</h3>
+                    <ol>
+                        <li>Turn off spellcheck or cover the screen.</li>
+                        <li>Write for 10–15 minutes without editing.</li>
+                        <li>Breaks compulsive fixing.</li>
+                    </ol>
+
+                    <h3>Protocol 3 – Error Exposure (Planned Imperfection):</h3>
+                    <ol>
+                        <li>Leave one small mistake intentionally.</li>
+                        <li>Submit without fixing.</li>
+                        <li>Discomfort reduces through habituation.</li>
+                    </ol>
+                `
+            },
+            {
+                id: 21,
+                title: "All-or-Nothing Thinking",
+                detail: `
+                    <h2>Technique: Continuum Scaling + Shaping + Behavioral Experiments</h2>
+                    <p>All-or-nothing thinking ignores the middle ground. These protocols train gradual progress.</p>
+
+                    <h3>Protocol 1 – Percentage Log (Scaling):</h3>
+                    <ol>
+                        <li>Instead of yes/no, log work as percentages.</li>
+                        <li>Write daily values (e.g., 23%).</li>
+                    </ol>
+
+                    <h3>Protocol 2 – Minimum Viable Rep (MVR):</h3>
+                    <ol>
+                        <li>Define the smallest doable task.</li>
+                        <li>Complete 1 MVR = success.</li>
+                        <li>Mark a green tick daily.</li>
+                    </ol>
+
+                    <h3>Protocol 3 – Behavioral Experiment (50% Day):</h3>
+                    <ol>
+                        <li>Pick a day where you're allowed only 50% effort.</li>
+                        <li>Observe nothing bad happens.</li>
+                        <li>Breaks perfection pressure.</li>
+                    </ol>
+                `
+            },
+            {
+                id: 22,
+                title: "Feeling Like You're Forgetting Everything / Mind Going Blank",
+                detail: `
+                    <h2>Technique: State-Dependent Learning + Cue-Based Retrieval</h2>
+                    <p>Mind blanking is anxiety blocking retrieval. These methods reopen access pathways.</p>
+
+                    <h3>Protocol 1 – Retrieval Practice Under Stress:</h3>
+                    <ol>
+                        <li>Do short quizzes with mild stress triggers (timer or noise).</li>
+                        <li>Improves recall under pressure.</li>
+                    </ol>
+
+                    <h3>Protocol 2 – Physical Retrieval Cues:</h3>
+                    <ol>
+                        <li>Pick a cue: pen, bracelet, or specific breathing.</li>
+                        <li>Study with the cue; use it during exams.</li>
+                    </ol>
+
+                    <h3>Protocol 3 – Cognitive Labeling:</h3>
+                    <ol>
+                        <li>Tell yourself: “This is anxiety blocking recall.”</li>
+                        <li>Remind: “The information is already stored.”</li>
+                    </ol>
+                `
+            },
+            {
+                id: 23,
+                title: "Sleep Disturbances (Too Much or Too Little Sleep)",
+                detail: `
+                    <h2>Technique: Stimulus Control Therapy + Paradoxical Intention + Wind-Down Ritual</h2>
+                    <p>We retrain the bed-sleep association and reduce nighttime anxiety.</p>
+
+                    <h3>Protocol 1 – Stimulus Control:</h3>
+                    <ol>
+                        <li>Bed is only for sleep.</li>
+                        <li>No scrolling or studying in bed.</li>
+                        <li>If awake for 20 minutes, leave the bed.</li>
+                    </ol>
+
+                    <h3>Protocol 2 – Paradoxical Intention:</h3>
+                    <ol>
+                        <li>Lie down and try to keep eyes open.</li>
+                        <li>Removes pressure to fall asleep.</li>
+                    </ol>
+
+                    <h3>Protocol 3 – Wind-Down Ritual (60-Min Buffer):</h3>
+                    <ol>
+                        <li>Stop studying 60 minutes before bed.</li>
+                        <li>Prepare for tomorrow (20 minutes).</li>
+                        <li>Relaxing activities for last 40 minutes.</li>
+                    </ol>
+                `
+            },
+            {
+                id: 24,
+                title: "Losing Interest in Hobbies or Activities",
+                detail: `
+                    <h2>Technique: Behavioral Activation + Mastery & Pleasure Ratings + Environmental Shaping</h2>
+                    <p>Hobby withdrawal reduces dopamine. BA restores reward pathways.</p>
+
+                    <h3>Protocol 1 – Scheduling Activities:</h3>
+                    <ol>
+                        <li>Add hobbies as calendar appointments.</li>
+                        <li>Perform even if motivation is low.</li>
+                    </ol>
+
+                    <h3>Protocol 2 – Mastery & Pleasure Tracking:</h3>
+                    <ol>
+                        <li>After activity, rate Mastery (0–10) and Pleasure (0–10).</li>
+                        <li>Helps brain rediscover enjoyment.</li>
+                    </ol>
+
+                    <h3>Protocol 3 – Reduce Activation Energy:</h3>
+                    <ol>
+                        <li>Keep tools visible and accessible.</li>
+                        <li>Low effort increases likelihood of starting.</li>
+                    </ol>
+                `
+            },
+            {
+                id: 25,
+                title: "Procrastination",
+                detail: `
+                    <h2>Technique: Premack Principle + Environmental Friction + Behavioral Chaining</h2>
+                    <p>Procrastination is avoidance of perceived threat. BT works by making work easier, distractions harder, and linking rewards to effort.</p>
+
+                    <h3>Protocol 1 - Premack Principle (“Grandma’s Rule”):</h3>
+                    <ol>
+                        <li>Fun activity = reward.</li>
+                        <li>Study = prerequisite.</li>
+                        <li>Rule: "No study, no reward."</li>
+                        <li>Example: No Instagram until 20 minutes of reading.</li>
+                        <li>The brain learns reward comes after effort.</li>
+                    </ol>
+
+                    <h3>Protocol 2 - Environmental Friction (Stimulus Control):</h3>
+                    <ol>
+                        <li>Increase effort for distractions: phone in another room, logout, blockers.</li>
+                        <li>Decrease effort for study: keep book open, laptop ready.</li>
+                        <li>The brain picks the easier behavior.</li>
+                    </ol>
+
+                    <h3>Protocol 3 - Behavioral Chaining (“Salami Slice Method”):</h3>
+                    <ol>
+                        <li>Commit to only the first step: open laptop, read one heading.</li>
+                        <li>Momentum makes continuation easier.</li>
+                        <li>Small steps remove threat perception.</li>
+                    </ol>
+
+                    <p><strong>Outcome:</strong> Studying feels doable; avoidance reduces.</p>
+                `
+            },
+            {
+                id: 26,
+                title: "Overworking (Not Knowing When to Stop)",
+                detail: `
+                <h2>Technique: Hard Stop Ritual + DRO + Response Cost</h2>
+                <p>Overworking is driven by fear of "not doing enough." BT restores boundaries and reduces burnout.</p>
+
+                <h3>Protocol 1 - Hard Stop Ritual:</h3>
+                <ol>
+                    <li>Choose a strict cutoff time (e.g., 9:00 PM).</li>
+                    <li>At that time: close work, hide materials, switch to night mode.</li>
+                    <li>No exceptions.</li>
+                </ol>
+
+                <h3>Protocol 2 - DRO (Differential Reinforcement of Other Behavior):</h3>
+                <ol>
+                    <li>Reward (TV, dessert) only if you stop exactly at cutoff time.</li>
+                    <li>If you continue even 5 minutes, no reward.</li>
+                    <li>Reinforces stopping behavior.</li>
+                </ol>
+
+                <h3>Protocol 3 - Response Cost (Overwork Tax):</h3>
+                <ol>
+                    <li>Set penalty if you break the rule.</li>
+                    <li>Examples: pay ₹100, extra chores.</li>
+                    <li>Makes overworking costly → reduces it.</li>
+                </ol>
+
+                <p><strong>Outcome:</strong> Rest feels safe; mental energy returns.</p>
+            `
+        },
+        {
+            id: 27,
+            title: "Social Withdrawal / Isolation",
+            detail: `
+                <h2>Technique: Graded Exposure + Behavioral Rehearsal + Opposite Action</h2>
+                <p>Isolation happens due to shame or anxiety. BT rebuilds confidence safely.</p>
+
+                <h3>Protocol 1 - Graded Exposure (Social Ladder):</h3>
+                <ol>
+                    <li>Level 1: Send a meme/message.</li>
+                    <li>Level 2: 3–5 minute call.</li>
+                    <li>Level 3: 15–30 minute meetup.</li>
+                    <li>Do not skip levels.</li>
+                </ol>
+
+                <h3>Protocol 2 - Behavioral Rehearsal (Safe Script):</h3>
+                <ol>
+                    <li>Prepare answer for "How are studies?"</li>
+                    <li>Example: "It's intense but manageable. Anyway, tell me about ___."</li>
+                    <li>Practice 5 times before meeting.</li>
+                </ol>
+
+                <h3>Protocol 3 - Opposite Action:</h3>
+                <ol>
+                    <li>When urge to hide appears → do the opposite.</li>
+                    <li>Example: Sit in living room for 10 minutes.</li>
+                </ol>
+
+                <p><strong>Outcome:</strong> Social anxiety decreases; connection becomes easier.</p>
+            `
+        },
+        {
+            id: 28,
+            title: "Neglecting Self-Care",
+            detail: `
+                <h2>Technique: Premack Rule + Visual Prompting + Behavioral Chaining</h2>
+                <p>Stress makes self-care optional. BT makes it automatic using environmental cues and rewards.</p>
+
+                <h3>Protocol 1 - Premack “Gatekeeper Rule”:</h3>
+                <ol>
+                    <li>No hygiene, no studying.</li>
+                    <li>You must shower/brush/eat before opening laptop or books.</li>
+                    <li>Turns study motivation into self-care motivation.</li>
+                </ol>
+
+                <h3>Protocol 2 - Visual Prompting:</h3>
+                <ol>
+                    <li>Lay out clothes and toiletries the night before.</li>
+                    <li>Keep water/snack on top of your textbook.</li>
+                    <li>Moving it triggers self-care.</li>
+                </ol>
+
+                <h3>Protocol 3 - Behavioral Chaining:</h3>
+                <ol>
+                    <li>Attach self-care to existing habits.</li>
+                    <li>Example: pee → wash hands → wash face.</li>
+                </ol>
+
+                <p><strong>Outcome:</strong> Self-care becomes consistent without effort.</p>
+            `
+        },
+        {
+            id: 29,
+            title: "Feeling Lonely / Pulling Away From People",
+            detail: `
+                <h2>Technique: Scheduled Social Reinforcement + Micro-Connections + Identity Rebuilding</h2>
+                <p>Loneliness reduces when positive social interactions increase in frequency.</p>
+
+                <h3>Protocol 1 - Scheduled Micro-Connections:</h3>
+                <ol>
+                    <li>Send one message or voice note daily.</li>
+                    <li>Comment on a friend's story.</li>
+                    <li>Low-pressure interactions prevent isolation.</li>
+                </ol>
+
+                <h3>Protocol 2 - Social Reinforcement Diary:</h3>
+                <ol>
+                    <li>After any interaction, write 1 line.</li>
+                    <li>Example: "7 min call → felt lighter."</li>
+                </ol>
+
+                <h3>Protocol 3 - Identity Rebuilding:</h3>
+                <ol>
+                    <li>Write 5 identities you hold (friend, dancer, creative).</li>
+                    <li>Do one identity-based action daily.</li>
+                </ol>
+
+                <p><strong>Outcome:</strong> Emotional grounding and social confidence return.</p>
+            `
+        },
+        {
+            id: 30,
+            title: "Overthinking / Mental Exhaustion",
+            detail: `
+                <h2>Technique: Cognitive Defusion + Worry Scheduling + Sensory Grounding</h2>
+                <p>Overthinking continues because the brain keeps trying to solve endlessly. BT imposes limits.</p>
+
+                <h3>Protocol 1 - Cognitive Defusion:</h3>
+                <ol>
+                    <li>Say your thought in a funny or exaggerated voice.</li>
+                    <li>Distance reduces emotional power.</li>
+                </ol>
+
+                <h3>Protocol 2 - Worry Scheduling:</h3>
+                <ol>
+                    <li>Choose a fixed 15-minute "Worry Time."</li>
+                    <li>During the day, delay worry: "I’ll think about this at 7 PM."</li>
+                    <li>Stop after 15 minutes.</li>
+                </ol>
+
+                <h3>Protocol 3 - Sensory Reset:</h3>
+                <ol>
+                    <li>5 things you see.</li>
+                    <li>4 you feel.</li>
+                    <li>3 you hear.</li>
+                    <li>2 you smell.</li>
+                    <li>1 taste.</li>
+                </ol>
+
+                <p><strong>Outcome:</strong> Clarity returns; mental noise reduces.</p>
+            `
+        },
+        {
+            id: 31,
+            title: "Emotional Numbness / Feeling Disconnected",
+            detail: `
+                <h2>Technique: Behavioral Activation + Sensory Enrichment + Emotional Labeling</h2>
+                <p>Numbness occurs when the nervous system is overloaded. BT reactivates emotional pathways.</p>
+
+                <h3>Protocol 1 - Sensory Enrichment:</h3>
+                <ol>
+                    <li>Cold shower, scented candle, new music, new food.</li>
+                    <li>Strong sensory input activates emotional centers.</li>
+                </ol>
+
+                <h3>Protocol 2 - Behavioral Activation:</h3>
+                <ol>
+                    <li>Do small enjoyable actions even if you feel nothing.</li>
+                    <li>Emotion appears after action.</li>
+                </ol>
+
+                <h3>Protocol 3 - Emotional Labeling:</h3>
+                <ol>
+                    <li>Ask "What am I feeling right now?"</li>
+                    <li>Choose from: sad, tired, stressed.</li>
+                    <li>Naming → processing → reconnection.</li>
+                    </ol>
+
+                <p><strong>Outcome:</strong> Emotional presence slowly returns.</p>
+            `
+        },
+        {
+            id: 32,
+            title: "Neglecting Routine Tasks & Life Maintenance",
+            detail: `
+                <h2>Technique: Habit Stacking + Environmental Engineering + Reinforcement Schedule</h2>
+                <p>Routine collapses when executive functioning drops. BT rebuilds automatic habits.</p>
+
+                <h3>Protocol 1 - Habit Stacking:</h3>
+                <ol>
+                    <li>Attach tasks to existing routines.</li>
+                    <li>Brush teeth → drink water.</li>
+                    <li>After lunch → clean desk 30 seconds.</li>
+                </ol>
+
+                <h3>Protocol 2 - Environmental Engineering:</h3>
+                <ol>
+                    <li>Keep room low-clutter.</li>
+                    <li>Place trash bin near work area.</li>
+                    <li>Use wall checklists.</li>
+                </ol>
+
+                <h3>Protocol 3 - Reinforcement Schedule:</h3>
+                <ol>
+                    <li>After 3 tasks → small reward.</li>
+                    <li>After full routine day → bigger reward.</li>
+                </ol>
+
+                <p><strong>Outcome:</strong> Life becomes manageable; functioning stabilizes.</p>
+            `
+        }
+        ];
+
+        let assessmentResults = [];
+
+        // --- 2. DYNAMIC RENDERING FUNCTIONS ---
+
+        function renderAssessment() {
+            const form = document.getElementById('assessment-form');
+            let html = '';
+
+            QUESTIONS.forEach((qText, index) => {
+                const qNum = index + 1;
+                html += `
+                    <div class="assessment-card question-item">
+                        <p>${qNum}. ${qText}</p>
+                        <div class="option-group">
+                `;
+                OPTIONS.forEach((oText, oIndex) => {
+                    // Radio button name is based on question index (q1, q2, etc.)
+                    html += `
+                        <label class="option-label">
+                            <input type="radio" name="q${qNum}" value="${SCORE_MAP[oIndex]}" required>
+                            ${oText}
+                        </label>
+                    `;
+                });
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            form.innerHTML = html;
+        }
+
+        // --- 3. PAGE VIEW MANAGEMENT ---
+
+        function showAssessment() {
+            document.getElementById('assessment-container').style.display = 'block';
+            document.getElementById('results-container').style.display = 'none';
+            document.getElementById('full-treatment-container').style.display = 'none';
+        }
+
+        function showResults() {
+            document.getElementById('assessment-container').style.display = 'none';
+            document.getElementById('results-container').style.display = 'block';
+            document.getElementById('full-treatment-container').style.display = 'none';
+        }
+
+        function showFullTreatment(treatmentID) {
+            const fullTreatment = FULL_TREATMENTS.find(t => t.id === treatmentID);
+            
+            document.getElementById('full-treatment-title').textContent = QUESTIONS[treatmentID - 1];
+            document.getElementById('full-treatment-content').innerHTML = fullTreatment ? fullTreatment.detail : 'Treatment details not available.';
+
+            document.getElementById('assessment-container').style.display = 'none';
+            document.getElementById('results-container').style.display = 'none';
+            document.getElementById('full-treatment-container').style.display = 'block';
+        }
+
+        // --- 4. SUBMISSION AND SCORING LOGIC ---
+
+        function submitAssessment() {
+            const form = document.getElementById('assessment-form');
+            // Check if all questions are answered
+            if (!form.checkValidity()) {
+                alert('Please answer all questions before submitting.');
+                return;
+            }
+
+            assessmentResults = [];
+            let identifiedIssuesCount = 0;
+            const resultsList = document.getElementById('results-list');
+            let resultsHTML = '';
+
+            QUESTIONS.forEach((qText, index) => {
+                const qNum = index + 1;
+                const radioName = `q${qNum}`;
+                const selectedRadio = form.elements[radioName].value;
+                const score = parseInt(selectedRadio); // score is 0, 1, 2, or 3
+
+                // The recommendation index (0, 1, 2, 3) is the same as the score.
+                const recommendation = SHORT_TREATMENTS[index].recommendations[score];
+                const issueTitle = SHORT_TREATMENTS[index].title;
+                const treatmentID = SHORT_TREATMENTS[index].id;
+                
+                // An issue is "Identified" if the score is 1 or higher (Several days, More than half the days, Nearly every day)
+                if (score >= 1) {
+                    identifiedIssuesCount++;
+                    const hasFullTreatment = FULL_TREATMENTS.some(t => t.id === treatmentID && t.detail.includes('<h2>')); // Checks if a proper treatment exists
+                    
+                    resultsHTML += `
+                        <div class="issue-result-item">
+                            <div class="question-text">
+                                <span>${qNum}. ${qText}</span>
+                                <button class="read-more-btn" ${hasFullTreatment ? `onclick="showFullTreatment(${treatmentID})"` : 'disabled'} style="${hasFullTreatment ? '' : 'background-color:#ccc; cursor:default;'}">Read More</button>
+                            </div>
+                            <div class="recommendation-box">
+                                <p><strong>${issueTitle}:</strong> ${recommendation}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            // If no issues, show a general positive message
+            if (identifiedIssuesCount === 0) {
+                resultsHTML = '<p style="text-align: center; font-size: 1.1em; padding: 20px;">🎉 Great news! No significant issues were identified in this assessment. Keep up your positive habits!</p>';
+            }
+
+            resultsList.innerHTML = resultsHTML;
+            
+            // Update the issue count summary
+            const issueCountElement = document.getElementById('issue-count');
+            issueCountElement.textContent = identifiedIssuesCount === 1 
+                ? '1 Issue Identified' 
+                : `${identifiedIssuesCount} Issues Identified`;
+
+            showResults();
+        }
+
+        // --- 5. INITIALIZATION ---
+
+        // Render questions when the page loads
+        document.addEventListener('DOMContentLoaded', renderAssessment);
+        
+    </script>
+</body>
+</html>
